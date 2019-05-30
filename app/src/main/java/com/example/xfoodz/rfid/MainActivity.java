@@ -234,7 +234,6 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
             butOpen.setVisibility(View.VISIBLE);
             butRegister.setVisibility(View.VISIBLE);
             butBackChoose.setVisibility(View.VISIBLE);
-            stopUsbConnection();
             standby = true;
 
         }
@@ -568,6 +567,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
     private void onSerialDataReceived(String data) {
         // Add whatever you want here
 //        dataView.setText(data);
+        stopUsbConnection();
         Log.i(TAG, "Serial data received: " + data);
 
         String[] words = data.split("\\s");
