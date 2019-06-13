@@ -144,13 +144,15 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
     private static final String PIN_RESET = "BCM25";
     private Rc522 mRc522;
 
-    private String link = "http://192.168.0.188:3000/api/android/";
+    private String link = "http://f67bda42.ngrok.io/api/android/";
 
     private String currentDoor = "";
     @Override
     public void onSuccessUpdateServer(String message) {
         Log.d(TAG, "Request server is successful " + message);
         if(message.equals("0")){
+            String speakWords = "Thẻ không hợp lệ";
+            niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
             standby = true;
             final Dialog errorDialog = new Dialog(context);
             errorDialog.setContentView(R.layout.error_dialog);
@@ -187,7 +189,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
             //message = "1";
             writeUartData(message);
             String speakWords = "Xin vui lòng đến ô số " + message;
-//        niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
+            niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
             door_state = DOOR_STATE.WAIT_DOOR_OPEN;
             door_timer = TIME_OUT_DOOR_OPEN;
             currentDoor = message;
@@ -222,6 +224,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
             butOpen.setVisibility(View.GONE);
             butBackChoose.setVisibility(View.GONE);
             standby = true;
+            textBox.setText("Please swipe your card");
         }
         else if(message.contains("registered-locker")){
             registeredLock = "";
@@ -235,7 +238,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
             butRegister.setVisibility(View.VISIBLE);
             butBackChoose.setVisibility(View.VISIBLE);
             standby = true;
-
+            textBox.setText("Please swipe your card");
         }
     }
 
@@ -248,6 +251,8 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
     public void onErrorUpdateServer(String message) {
         //txtConsole.setText("Request server is fail");
         Log.d(TAG, "Request server is fail");
+        String speakWords = "Không có kết nối đến máy chủ";
+        niceTTS.speak(speakWords, TextToSpeech.QUEUE_FLUSH, null);
         standby = true;
         final Dialog errorDialog = new Dialog(context);
         errorDialog.setContentView(R.layout.error_dialog);
@@ -568,6 +573,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
         // Add whatever you want here
 //        dataView.setText(data);
         stopUsbConnection();
+        textBox.setText("Processing card...");
         Log.i(TAG, "Serial data received: " + data);
 
         String[] words = data.split("\\s");
@@ -698,7 +704,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
                             } else txtIPAddress.setText("No connection");
 
                             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
                             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                             date.setText(format.format(new Date()));
                             format = new SimpleDateFormat("hh:mm");
@@ -1017,7 +1023,7 @@ public class MainActivity extends Activity implements View.OnClickListener, NPNH
             } else txtIPAddress.setText("No connection");
 
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             date.setText(format.format(new Date()));
             format = new SimpleDateFormat("hh:mm");
